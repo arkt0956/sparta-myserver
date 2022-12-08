@@ -1,37 +1,50 @@
 package com.nbcamp.myserver.controller;
 
+import com.nbcamp.myserver.dto.BoardRequestDto;
+import com.nbcamp.myserver.entity.Board;
+import com.nbcamp.myserver.service.BoardService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
-@Controller
+import java.util.List;
+
+@RestController
+@RequiredArgsConstructor
 public class BoardController {
-    @GetMapping("/api/showall")
-    @ResponseBody
-    public String showAll() {
 
+    private final BoardService boardService;
+
+    @GetMapping("/")
+    public ModelAndView home() {
+        return new ModelAndView("index");
     }
 
-    @PostMapping("/api/posting")
-    @ResponseBody
-    public String posting() {
-
+    @PostMapping("/api/boards")
+    public Board createBoard(@RequestBody BoardRequestDto requestDto) {
+        return boardService.createBoard(requestDto);
     }
 
-    @GetMapping("/api/show")
-    @ResponseBody
-    public String show() {
-
+    @GetMapping("/api/boards")
+    public List<Board> getBoards() {
+        return boardService.findBoards();
     }
 
-    @PutMapping("/api/edit")
-    @ResponseBody
-    public String edit() {
-
+    @GetMapping("/api/board/{id}")
+    public Board getBoard(@PathVariable Long id) {
+        return boardService.findOne(id);
     }
 
-    @DeleteMapping("/api/delete")
-    @ResponseBody
-    public String delete() {
+    @PutMapping("/api/boards/{id}")
+    public Board updateBoards(@PathVariable Long id, @RequestBody BoardRequestDto requestDto) {
+        return boardService.update(id, requestDto);
+    }
 
+    @DeleteMapping("/api/boards/{id}")
+    public String deleteBoards(@PathVariable Long id, @RequestBody BoardRequestDto requestDto) {
+        return boardService.deleteMemo(id, requestDto);
     }
 }
+
