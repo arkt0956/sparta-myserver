@@ -35,7 +35,7 @@ public class BoardService {
     }
 
 
-    public String deleteMemo(Long id, BoardRequestDto requestDto) {
+    public String delete(Long id, BoardRequestDto requestDto) {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
         );

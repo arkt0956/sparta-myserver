@@ -44,7 +44,7 @@ public class BoardController {
 
     @DeleteMapping("/api/boards/{id}")
     public String deleteBoards(@PathVariable Long id, @RequestBody BoardRequestDto requestDto) {
-        return boardService.deleteMemo(id, requestDto);
+        return boardService.delete(id, requestDto);
     }
 }
 
