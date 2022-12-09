@@ -3,6 +3,8 @@
 
 https://www.notion.so/Spring-c7fe04d7c9304040ba57757101e035fc#8b1b238834f241b9af6c989e62e0051e
 
+|name|URL|method|Request|Response|functional|logic
+
 1. 수정, 삭제 API의 request를 어떤 방식으로 사용하셨나요? (param, query, body)
   수정: PUT, 삭제: DELETE
   @RequestBody 어노테이션으로 게시물 등을 받아왔습니다.
