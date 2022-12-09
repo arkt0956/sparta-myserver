@@ -3,23 +3,6 @@
 
 https://www.notion.so/Spring-c7fe04d7c9304040ba57757101e035fc#8b1b238834f241b9af6c989e62e0051e
 
-|name|URL|method|Request|Response|functional|logic|
-|------|------|------|------|------|------|------|
-|getBoards|/api/boards|GET|------|{
-{”id”: 1,
-”title”: “test”,
-”author”:”sh”,
-”password”:”123”,
-”context”: “context”,
-"createdAt": "2022-12-09T00:27:01.776062”,
-"modifiedAt": "2022-12-09T00:27:01.776062”}…
-}|- 제목, 작성자명, 작성 내용, 작성 날짜를 조회하기
-- 작성 날짜 기준 내림차순으로 정렬하기|Repository 내 전체 Boards 반환
-service에서 List<Board>를 준다.(메소드 명: findBoards()|
-|createBoard|------|------|------|------|------|------|
-|getBoard|------|------|------|------|------|------|
-|updateBoards|------|------|------|------|------|------|
-|deleteBoards|------|------|------|------|------|------|
 
 1. 수정, 삭제 API의 request를 어떤 방식으로 사용하셨나요? (param, query, body)
   수정: PUT, 삭제: DELETE
