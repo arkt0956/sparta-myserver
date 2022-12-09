@@ -23,10 +23,6 @@ public class BoardService {
         return board;
     }
 
-    public List<Board> getMemos() {
-        return boardRepository.findAll();
-    }
-
     public Board update(Long id, BoardRequestDto requestDto) {
 
         Board board = boardRepository.findById(id).orElseThrow(
