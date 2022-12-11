@@ -1,6 +1,7 @@
 package com.nbcamp.myserver.service;
 
 import com.nbcamp.myserver.dto.BoardRequestDto;
+import com.nbcamp.myserver.dto.BoardResponseDto;
 import com.nbcamp.myserver.entity.Board;
 import com.nbcamp.myserver.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,13 +19,13 @@ import java.util.Optional;
 public class BoardService {
     private final BoardRepository boardRepository;
 
-    public Board createBoard(BoardRequestDto requestDto) {
+    public BoardResponseDto createBoard(BoardRequestDto requestDto) {
         Board board = new Board(requestDto);
         boardRepository.save(board);
-        return board;
+        return board.createResponse(BoardResponseDto::new);
     }
 
-    public Board update(Long id, BoardRequestDto requestDto) {
+    public BoardResponseDto update(Long id, BoardRequestDto requestDto) {
 
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
@@ -31,7 +33,7 @@ public class BoardService {
         if(board.getPassword().equals(requestDto.getPassword())) {
             board.update(requestDto);
         }
-        return board;
+        return board.createResponse(BoardResponseDto::new);
     }
 
 
@@ -46,13 +48,18 @@ public class BoardService {
         return "{\"msg\":\"fail\"}";
     }
 
-    public List<Board> findBoards() {
-        return boardRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+    public List<BoardResponseDto> findBoards() {
+        List<Board> boards = boardRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+        List<BoardResponseDto> responseDtos = new ArrayList<>();
+        for(Board board: boards) {
+            responseDtos.add(board.createResponse(BoardResponseDto::new));
+        }
+        return responseDtos;
     }
-    public Board findOne(Long memberId) {
+    public BoardResponseDto findOne(Long memberId) {
         Board board = boardRepository.findById(memberId).orElseThrow(
                 () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
         );
-        return board;
+        return board.createResponse(BoardResponseDto::new);
     }
 }

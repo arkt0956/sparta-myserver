@@ -1,6 +1,7 @@
 package com.nbcamp.myserver.controller;
 
 import com.nbcamp.myserver.dto.BoardRequestDto;
+import com.nbcamp.myserver.dto.BoardResponseDto;
 import com.nbcamp.myserver.entity.Board;
 import com.nbcamp.myserver.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -23,22 +24,22 @@ public class BoardController {
     }
 
     @PostMapping("/api/boards")
-    public Board createBoard(@RequestBody BoardRequestDto requestDto) {
+    public BoardResponseDto createBoard(@RequestBody BoardRequestDto requestDto) {
         return boardService.createBoard(requestDto);
     }
 
     @GetMapping("/api/boards")
-    public List<Board> getBoards() {
+    public List<BoardResponseDto> getBoards() {
         return boardService.findBoards();
     }
 
     @GetMapping("/api/board/{id}")
-    public Board getBoard(@PathVariable Long id) {
+    public BoardResponseDto getBoard(@PathVariable Long id) {
         return boardService.findOne(id);
     }
 
     @PutMapping("/api/boards/{id}")
-    public Board updateBoards(@PathVariable Long id, @RequestBody BoardRequestDto requestDto) {
+    public BoardResponseDto updateBoards(@PathVariable Long id, @RequestBody BoardRequestDto requestDto) {
         return boardService.update(id, requestDto);
     }
 

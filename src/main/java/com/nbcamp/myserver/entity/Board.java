@@ -1,6 +1,7 @@
 package com.nbcamp.myserver.entity;
 
 import com.nbcamp.myserver.dto.BoardRequestDto;
+import com.nbcamp.myserver.dto.BoardResponseDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,11 @@ public class Board extends Timestamped{
         this.author = dto.getAuthor();
         this.password = dto.getPassword();
         this.context = dto.getContext();
+    }
+
+    public BoardResponseDto createResponse(CreateResponseDto createResponseDto) {
+        BoardResponseDto boardResponseDto = createResponseDto.create(id, title, author, context, super.getCreatedAt().toString());
+        return boardResponseDto;
     }
 
     public void update(BoardRequestDto dto) {
