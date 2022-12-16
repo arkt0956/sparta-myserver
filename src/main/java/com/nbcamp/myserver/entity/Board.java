@@ -18,8 +18,8 @@ public class Board extends Timestamped{
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
-    private String author;
+    @Column(nullable = false, unique = true)
+    private String username;
 
     @Column(nullable = false)
     private String password;
@@ -27,21 +27,25 @@ public class Board extends Timestamped{
     @Column(nullable = false)
     private String context;
 
-    public Board(BoardRequestDto dto) {
+    @Column(nullable = false)
+    private Long userId;
+
+    public Board(BoardRequestDto dto, Long userId) {
         this.title = dto.getTitle();
-        this.author = dto.getAuthor();
+        this.username = dto.getUsername();
         this.password = dto.getPassword();
         this.context = dto.getContext();
+        this.userId = userId;
     }
 
     public BoardResponseDto createResponse(CreateBoardDto createBoardDto) {
-        BoardResponseDto boardResponseDto = createBoardDto.create(id, title, author, context, super.getCreatedAt().toString());
+        BoardResponseDto boardResponseDto = createBoardDto.create(id, title, username, context, super.getCreatedAt().toString());
         return boardResponseDto;
     }
 
     public void update(BoardRequestDto dto) {
         this.title = dto.getTitle();
-        this.author = dto.getAuthor();
+        this.username = dto.getUsername();
         this.password = dto.getPassword();
         this.context = dto.getContext();
     }

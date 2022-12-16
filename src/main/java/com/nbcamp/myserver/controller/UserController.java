@@ -28,8 +28,7 @@ public class UserController {
     @PostMapping("/signup")
     @ResponseBody
     public SignupLoginResponseDto signup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
-        SignupLoginResponseDto response = userService.signup(signupRequestDto);
-        return response;
+        return userService.signup(signupRequestDto);
     }
 
     //로그인
