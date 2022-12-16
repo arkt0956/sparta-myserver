@@ -2,6 +2,7 @@ package com.nbcamp.myserver.entity;
 
 import com.nbcamp.myserver.dto.BoardRequestDto;
 import com.nbcamp.myserver.dto.BoardResponseDto;
+import com.nbcamp.myserver.dto.CreateBoardDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,8 +34,8 @@ public class Board extends Timestamped{
         this.context = dto.getContext();
     }
 
-    public BoardResponseDto createResponse(CreateResponseDto createResponseDto) {
-        BoardResponseDto boardResponseDto = createResponseDto.create(id, title, author, context, super.getCreatedAt().toString());
+    public BoardResponseDto createResponse(CreateBoardDto createBoardDto) {
+        BoardResponseDto boardResponseDto = createBoardDto.create(id, title, author, context, super.getCreatedAt().toString());
         return boardResponseDto;
     }
 

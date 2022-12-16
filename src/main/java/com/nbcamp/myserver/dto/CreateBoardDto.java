@@ -1,8 +1,6 @@
-package com.nbcamp.myserver.entity;
-
-import com.nbcamp.myserver.dto.BoardResponseDto;
+package com.nbcamp.myserver.dto;
 
 @FunctionalInterface
-public interface CreateResponseDto {
+public interface CreateBoardDto {
     public BoardResponseDto create(Long id, String title, String author, String context, String createdAt);
 }
