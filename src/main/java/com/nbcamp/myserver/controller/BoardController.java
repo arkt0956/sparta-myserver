@@ -41,13 +41,13 @@ public class BoardController {
 //    }
 
     @PutMapping("/api/boards/{id}")
-    public BoardResponseDto updateBoards(@PathVariable Long id, @RequestBody BoardRequestDto requestDto) {
-        return boardService.update(id, requestDto);
+    public BoardResponseDto updateBoards(@PathVariable Long id, @RequestBody BoardRequestDto requestDto, HttpServletRequest request) {
+        return boardService.update(id, requestDto, request);
     }
 
     @DeleteMapping("/api/boards/{id}")
-    public String deleteBoards(@PathVariable Long id, @RequestBody BoardRequestDto requestDto) {
-        return boardService.delete(id, requestDto);
+    public String deleteBoards(@PathVariable Long id, @RequestBody BoardRequestDto requestDto, HttpServletRequest request) {
+        return boardService.delete(id, requestDto, request);
     }
 }
 

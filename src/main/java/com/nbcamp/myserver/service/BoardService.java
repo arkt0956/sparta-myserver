@@ -2,6 +2,7 @@ package com.nbcamp.myserver.service;
 
 import com.nbcamp.myserver.dto.BoardRequestDto;
 import com.nbcamp.myserver.dto.BoardResponseDto;
+import com.nbcamp.myserver.dto.SignupLoginResponseDto;
 import com.nbcamp.myserver.entity.Board;
 import com.nbcamp.myserver.entity.User;
 import com.nbcamp.myserver.jwt.JwtUtil;
@@ -50,27 +51,58 @@ public class BoardService {
         }
     }
 
-    public BoardResponseDto update(Long id, BoardRequestDto requestDto) {
+    public BoardResponseDto update(Long id, BoardRequestDto requestDto,HttpServletRequest request) {
 
-        Board board = boardRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
-        );
-        if(board.getPassword().equals(requestDto.getPassword())) {
-            board.update(requestDto);
+        String token = jwtUtil.resolveToken(request);
+        Claims claims;
+
+        if(token != null) {
+            if(jwtUtil.validateToken(token)) {
+                claims = jwtUtil.getUserInfoFromToken(token);
+            } else {
+                throw new IllegalArgumentException("Token Error");
+            }
+            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+                    () -> new IllegalArgumentException("해당 사용자가 없는데요?")
+            );
+
+            Board board = boardRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
+                    () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
+            );
+            if(board.getPassword().equals(requestDto.getPassword())) {
+                board.update(requestDto);
+            }
+            return board.createResponse(BoardResponseDto::new);
         }
-        return board.createResponse(BoardResponseDto::new);
+        return null;
+
     }
 
 
-    public String delete(Long id, BoardRequestDto requestDto) {
-        Board board = boardRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
-        );
-        if(board.getPassword().equals(requestDto.getPassword())) {
-            boardRepository.deleteById(id);
-            return "{\"msg\":\"success\"}";
+    public SignupLoginResponseDto delete(Long id, BoardRequestDto requestDto, HttpServletRequest request) {
+
+        String token = jwtUtil.resolveToken(request);
+        Claims claims;
+
+        if(token != null) {
+            if(jwtUtil.validateToken(token)) {
+                claims = jwtUtil.getUserInfoFromToken(token);
+            } else {
+                throw new IllegalArgumentException("Token Error");
+            }
+            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+                    () -> new IllegalArgumentException("해당 사용자가 없습니다.")
+            );
+
+            Board board = boardRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
+                    () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
+            );
+            if(board.getPassword().equals(requestDto.getPassword())) {
+                boardRepository.deleteById(id);
+                return new SignupLoginResponseDto("success", "200");
+            }
         }
-        return "{\"msg\":\"fail\"}";
+        return new SignupLoginResponseDto("fail", "400");
     }
 
     public List<BoardResponseDto> findBoards(HttpServletRequest request) {
