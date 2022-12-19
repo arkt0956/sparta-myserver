@@ -2,6 +2,7 @@ package com.nbcamp.myserver.controller;
 
 import com.nbcamp.myserver.dto.BoardRequestDto;
 import com.nbcamp.myserver.dto.BoardResponseDto;
+import com.nbcamp.myserver.dto.SignupLoginResponseDto;
 import com.nbcamp.myserver.service.BoardService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -31,22 +32,13 @@ public class BoardController {
         return boardService.findBoards(request);
     }
 
-    // 전체 게시글 조회(관리자 토큰 필요)
-    @GetMapping("/api/allboards")
-    public List<BoardResponseDto> getAllBoards(HttpServletRequest request) { return boardService.findAllBoards(request);}
-
-//    @GetMapping("/api/board/{id}")
-//    public BoardResponseDto getBoard(@PathVariable Long id) {
-//        return boardService.findOne(id);
-//    }
-
     @PutMapping("/api/boards/{id}")
     public BoardResponseDto updateBoards(@PathVariable Long id, @RequestBody BoardRequestDto requestDto, HttpServletRequest request) {
         return boardService.update(id, requestDto, request);
     }
 
     @DeleteMapping("/api/boards/{id}")
-    public String deleteBoards(@PathVariable Long id, @RequestBody BoardRequestDto requestDto, HttpServletRequest request) {
+    public SignupLoginResponseDto deleteBoards(@PathVariable Long id, @RequestBody BoardRequestDto requestDto, HttpServletRequest request) {
         return boardService.delete(id, requestDto, request);
     }
 }

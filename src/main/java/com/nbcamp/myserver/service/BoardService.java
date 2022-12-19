@@ -5,6 +5,7 @@ import com.nbcamp.myserver.dto.BoardResponseDto;
 import com.nbcamp.myserver.dto.SignupLoginResponseDto;
 import com.nbcamp.myserver.entity.Board;
 import com.nbcamp.myserver.entity.User;
+import com.nbcamp.myserver.entity.UserRoleEnum;
 import com.nbcamp.myserver.jwt.JwtUtil;
 import com.nbcamp.myserver.repository.BoardRepository;
 import com.nbcamp.myserver.repository.UserRepository;
@@ -26,7 +27,6 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
-    private final String ADMIN_TOKEN = "TMzNDQiLCJhdXRoIjoiZWZlZmVmNjY2NzciLCJleHA";
 
     public BoardResponseDto createBoard(BoardRequestDto requestDto, HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
@@ -69,10 +69,34 @@ public class BoardService {
             Board board = boardRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
                     () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
             );
-            if(board.getPassword().equals(requestDto.getPassword())) {
-                board.update(requestDto);
+
+
+            // 사용자 권한 가져와서 ADMIN 이면 전체 조회, USER 면 본인이 추가한 부분 조회
+            UserRoleEnum userRoleEnum = user.getRole();
+            System.out.println("role = " + userRoleEnum);
+
+            List<Board> boardList;
+
+            if (userRoleEnum == UserRoleEnum.USER) {
+                // 사용자 권한이 USER일 경우
+                if(board.getPassword().equals(requestDto.getPassword())) {
+                    boardList = boardRepository.findAllByUserId(user.getId());
+                } else {
+                    throw new IllegalArgumentException("비밀번호를 틀렸습니다.");
+                }
+            } else {
+                boardList = boardRepository.findAll();
             }
-            return board.createResponse(BoardResponseDto::new);
+
+
+            for (Board b : boardList) {
+                if(b.getId().equals(requestDto.getId())) {
+                    b.update(requestDto);
+                    boardRepository.save(b);
+                }
+                return b.createResponse(BoardResponseDto::new);
+            }
+
         }
         return null;
 
@@ -97,9 +121,29 @@ public class BoardService {
             Board board = boardRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
                     () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
             );
-            if(board.getPassword().equals(requestDto.getPassword())) {
-                boardRepository.deleteById(id);
-                return new SignupLoginResponseDto("success", "200");
+
+            UserRoleEnum userRoleEnum = user.getRole();
+            System.out.println("role = " + userRoleEnum);
+
+            List<Board> boardList;
+
+            if (userRoleEnum == UserRoleEnum.USER) {
+                // 사용자 권한이 USER일 경우
+                if(board.getPassword().equals(requestDto.getPassword())) {
+                    boardList = boardRepository.findAllByUserId(user.getId());
+                } else {
+                    throw new IllegalArgumentException("비밀번호를 틀렸습니다.");
+                }
+            } else {
+                boardList = boardRepository.findAll();
+            }
+
+
+            for (Board b : boardList) {
+                if(b.getId().equals(requestDto.getId())) {
+                    boardRepository.deleteById(id);
+                    return new SignupLoginResponseDto("success","200");
+                }
             }
         }
         return new SignupLoginResponseDto("fail", "400");
@@ -121,13 +165,22 @@ public class BoardService {
                     () -> new IllegalArgumentException("Sorry. That user not exist.")
             );
 
+            UserRoleEnum userRoleEnum = user.getRole();
+            System.out.println("role = " + userRoleEnum);
+
             List<BoardResponseDto> list = new ArrayList<>();
             List<Board> boardList;
 
-            // 아이디로 조회
-            boardList = boardRepository.findAllByUserId(user.getId());
-            for (Board board : boardList) {
-                list.add(board.createResponse(BoardResponseDto::new));
+            if(userRoleEnum == UserRoleEnum.USER) {
+                boardList = boardRepository.findAllByUserId(user.getId());
+                for (Board board : boardList) {
+                    list.add(board.createResponse(BoardResponseDto::new));
+                }
+            } else {
+                List<Board> boards = boardRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+                for(Board board: boards) {
+                    list.add(board.createResponse(BoardResponseDto::new));
+                }
             }
             return list;
         } else {
@@ -136,26 +189,4 @@ public class BoardService {
 
     }
 
-    public List<BoardResponseDto> findAllBoards(HttpServletRequest request) {
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
-
-        if(token != null) {
-            if(token.equals(ADMIN_TOKEN)) {
-                List<Board> boards = boardRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
-                List<BoardResponseDto> responseDtos = new ArrayList<>();
-                for(Board board: boards) {
-                    responseDtos.add(board.createResponse(BoardResponseDto::new));
-                }
-                return responseDtos;
-            }
-        }
-        return null;
-    }
-//    public BoardResponseDto findOne(Long memberId) {
-//        Board board = boardRepository.findById(memberId).orElseThrow(
-//                () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
-//        );
-//        return board.createResponse(BoardResponseDto::new);
-//    }
 }

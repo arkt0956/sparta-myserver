@@ -4,6 +4,7 @@ import com.nbcamp.myserver.dto.LoginRequestDto;
 import com.nbcamp.myserver.dto.SignupRequestDto;
 import com.nbcamp.myserver.dto.SignupLoginResponseDto;
 import com.nbcamp.myserver.entity.User;
+import com.nbcamp.myserver.entity.UserRoleEnum;
 import com.nbcamp.myserver.jwt.JwtUtil;
 import com.nbcamp.myserver.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,6 +20,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+    private final String ADMIN_TOKEN = "TMzNDQiLCJhdXRoIjoiZWZlZmVmNjY2NzciLCJleHA";
 
     @Transactional
     public SignupLoginResponseDto signup(SignupRequestDto signupRequestDto) {
@@ -31,14 +33,16 @@ public class UserService {
             throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
         }
 
-//        if(!Pattern.matches("[a-zA-z0-9]{4,10}", username)) {
-//            throw new IllegalArgumentException("아이디는 최소 4자 이상, 10자 이하이며 알파벳 소문자(a~z), 숫자(0~9)로 구성되어야 합니다.");
-//        }
-//        if(!Pattern.matches("\\w{8,15}", password)) {
-//            throw new IllegalArgumentException("비밀번호는 최소 8자 이상, 15자 이하이며 알파벳 대소문자(a~z, A~Z), 숫자(0~9)로 구성되어야 합니다.");
-//        }
+        // 사용자 ROLE 확인
+        UserRoleEnum role = UserRoleEnum.USER;
+        if (signupRequestDto.isAdmin()) {
+            if (!signupRequestDto.getAdminToken().equals(ADMIN_TOKEN)) {
+                throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능합니다.");
+            }
+            role = UserRoleEnum.ADMIN;
+        }
 
-        User user = new User(username, password);
+        User user = new User(username, password, role);
         userRepository.save(user);
 
         return new SignupLoginResponseDto("success", "200");
@@ -58,7 +62,7 @@ public class UserService {
             throw  new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getPassword()));
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getRole()));
 
         return new SignupLoginResponseDto("success", "200");
     }

@@ -11,8 +11,19 @@ public class SignupRequestDto {
     @Pattern(regexp = "\\w{8,15}")
     private String password;
 
-    public SignupRequestDto(String username, String password) {
+    private boolean admin = false;
+    private String adminToken = "";
+
+    public SignupRequestDto(String username, String password, boolean admin) {
         this.username = username;
         this.password = password;
+        this.admin = admin;
+    }
+
+    public SignupRequestDto(String username, String password, boolean admin, String adminToken) {
+        this.username = username;
+        this.password = password;
+        this.admin = admin;
+        this.adminToken = adminToken;
     }
 }

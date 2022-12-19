@@ -2,10 +2,14 @@ package com.nbcamp.myserver.entity;
 
 import com.nbcamp.myserver.dto.BoardRequestDto;
 import com.nbcamp.myserver.dto.BoardResponseDto;
+import com.nbcamp.myserver.dto.CommentRequestDto;
 import com.nbcamp.myserver.dto.CreateBoardDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -18,7 +22,7 @@ public class Board extends Timestamped{
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String username;
 
     @Column(nullable = false)
@@ -29,6 +33,9 @@ public class Board extends Timestamped{
 
     @Column(nullable = false)
     private Long userId;
+
+    @OneToMany
+    private List<Comment> comments = new ArrayList<>();
 
     public Board(BoardRequestDto dto, Long userId) {
         this.title = dto.getTitle();
@@ -48,5 +55,9 @@ public class Board extends Timestamped{
         this.username = dto.getUsername();
         this.password = dto.getPassword();
         this.context = dto.getContext();
+    }
+
+    public void postComment(Comment comment) {
+        this.comments.add(comment);
     }
 }
