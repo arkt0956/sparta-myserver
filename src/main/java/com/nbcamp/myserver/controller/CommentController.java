@@ -2,6 +2,7 @@ package com.nbcamp.myserver.controller;
 
 import com.nbcamp.myserver.dto.CommentRequestDto;
 import com.nbcamp.myserver.dto.CommentResponseDto;
+import com.nbcamp.myserver.dto.SignupLoginResponseDto;
 import com.nbcamp.myserver.entity.Comment;
 import com.nbcamp.myserver.service.CommentService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,5 +26,15 @@ public class CommentController {
     @PostMapping("/comments")
     public CommentResponseDto addComments(@RequestBody CommentRequestDto commentRequestDto, HttpServletRequest request) {
         return commentService.addComments(commentRequestDto, request);
+    }
+
+    @PutMapping("/comments")
+    public CommentResponseDto changeComments(@RequestBody CommentRequestDto commentRequestDto, HttpServletRequest request) {
+        return commentService.changeComments(commentRequestDto, request);
+    }
+
+    @DeleteMapping("/comments")
+    public SignupLoginResponseDto deleteComments(@RequestBody CommentRequestDto commentRequestDto, HttpServletRequest request) {
+        return commentService.deleteComments(commentRequestDto, request);
     }
 }

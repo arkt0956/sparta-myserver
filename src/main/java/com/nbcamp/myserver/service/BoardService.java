@@ -90,7 +90,7 @@ public class BoardService {
 
 
             for (Board b : boardList) {
-                if(b.getId().equals(requestDto.getId())) {
+                if(b.getId() == id) {
                     b.update(requestDto);
                     boardRepository.save(b);
                 }
@@ -118,10 +118,6 @@ public class BoardService {
                     () -> new IllegalArgumentException("해당 사용자가 없습니다.")
             );
 
-            Board board = boardRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                    () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
-            );
-
             UserRoleEnum userRoleEnum = user.getRole();
             System.out.println("role = " + userRoleEnum);
 
@@ -129,7 +125,7 @@ public class BoardService {
 
             if (userRoleEnum == UserRoleEnum.USER) {
                 // 사용자 권한이 USER일 경우
-                if(board.getPassword().equals(requestDto.getPassword())) {
+                if(user.getPassword().equals(requestDto.getPassword())) {
                     boardList = boardRepository.findAllByUserId(user.getId());
                 } else {
                     throw new IllegalArgumentException("비밀번호를 틀렸습니다.");

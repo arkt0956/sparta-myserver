@@ -9,13 +9,15 @@ public class BoardResponseDto {
     private String author;
     private String context;
     private String createdAt;
+    private String comments;
 
-    public BoardResponseDto(Long id, String title, String author, String context, String createdAt) {
+    public BoardResponseDto(Long id, String title, String author, String context, String createdAt, String comments) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.context = context;
         this.createdAt = createdAt;
+        this.comments = comments;
     }
 
 }

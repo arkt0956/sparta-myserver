@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -46,7 +47,7 @@ public class Board extends Timestamped{
     }
 
     public BoardResponseDto createResponse(CreateBoardDto createBoardDto) {
-        BoardResponseDto boardResponseDto = createBoardDto.create(id, title, username, context, super.getCreatedAt().toString());
+        BoardResponseDto boardResponseDto = createBoardDto.create(id, title, username, context, super.getCreatedAt().toString(), commentsToString());
         return boardResponseDto;
     }
 
@@ -58,6 +59,16 @@ public class Board extends Timestamped{
     }
 
     public void postComment(Comment comment) {
-        this.comments.add(comment);
+        this.comments.add(0, comment);
+//        Collections.sort(comments);
+    }
+
+    public String commentsToString() {
+        StringBuilder st = new StringBuilder();
+        for(Comment comment : comments) {
+            st.append(comment.toString());
+            st.append(System.lineSeparator());
+        }
+        return st.toString();
     }
 }
