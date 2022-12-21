@@ -43,7 +43,7 @@ public class BoardService {
                     () -> new IllegalArgumentException("Sorry. That Post not exist.")
             );
 
-            Board board = boardRepository.saveAndFlush(new Board(requestDto, user.getId()));
+            Board board = boardRepository.saveAndFlush(new Board(requestDto, user));
 
             return board.createResponse(BoardResponseDto::new);
         } else {
@@ -103,7 +103,7 @@ public class BoardService {
     }
 
 
-    public SignupLoginResponseDto delete(Long id, BoardRequestDto requestDto, HttpServletRequest request) {
+    public SignupLoginResponseDto delete(Long id, HttpServletRequest request) {
 
         String token = jwtUtil.resolveToken(request);
         Claims claims;
@@ -125,18 +125,14 @@ public class BoardService {
 
             if (userRoleEnum == UserRoleEnum.USER) {
                 // 사용자 권한이 USER일 경우
-                if(user.getPassword().equals(requestDto.getPassword())) {
-                    boardList = boardRepository.findAllByUserId(user.getId());
-                } else {
-                    throw new IllegalArgumentException("비밀번호를 틀렸습니다.");
-                }
+                boardList = boardRepository.findAllByUserId(user.getId());
             } else {
                 boardList = boardRepository.findAll();
             }
 
 
             for (Board b : boardList) {
-                if(b.getId().equals(requestDto.getId())) {
+                if(b.getId().equals(id)) {
                     boardRepository.deleteById(id);
                     return new SignupLoginResponseDto("success","200");
                 }

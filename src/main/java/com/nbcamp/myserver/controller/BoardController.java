@@ -38,8 +38,7 @@ public class BoardController {
     }
 
     @DeleteMapping("/api/boards/{id}")
-    public SignupLoginResponseDto deleteBoards(@PathVariable Long id, @RequestBody BoardRequestDto requestDto, HttpServletRequest request) {
-        return boardService.delete(id, requestDto, request);
+    public SignupLoginResponseDto deleteBoards(@PathVariable Long id, HttpServletRequest request) {
+        return boardService.delete(id, request);
     }
 }
-

@@ -141,7 +141,7 @@ public class CommentService {
             Messages.createMessage(stateCode);
         }
         if(updated.getId() != null) {
-            return updated.createResponse(); //찾을 수 없을때 null이 그대로 반환돼서 statecode 500이 찍힘
+            return updated.createResponse();
         } else {
             throw new IllegalArgumentException("작성자만 삭제/수정할 수 있습니다.");
         }
@@ -149,7 +149,7 @@ public class CommentService {
     }
 
     @Transactional
-    public SignupLoginResponseDto deleteComments(CommentRequestDto commentRequestDto, HttpServletRequest request) {
+    public SignupLoginResponseDto deleteComments(Long id, HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
         Claims claims;
 
@@ -176,7 +176,7 @@ public class CommentService {
             }
 
             for (Comment comment : commentList) {
-                if (comment.getId() == commentRequestDto.getId()) {
+                if (comment.getId() == id) {
                     commentRepository.deleteById(comment.getId());
                     return new SignupLoginResponseDto("success", "200");
                 }

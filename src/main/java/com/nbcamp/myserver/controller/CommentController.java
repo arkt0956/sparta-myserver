@@ -33,8 +33,8 @@ public class CommentController {
         return commentService.changeComments(commentRequestDto, request);
     }
 
-    @DeleteMapping("/comments")
-    public SignupLoginResponseDto deleteComments(@RequestBody CommentRequestDto commentRequestDto, HttpServletRequest request) {
-        return commentService.deleteComments(commentRequestDto, request);
+    @DeleteMapping("/comments/{id}")
+    public SignupLoginResponseDto deleteComments(@PathVariable Long id, HttpServletRequest request) {
+        return commentService.deleteComments(id, request);
     }
 }

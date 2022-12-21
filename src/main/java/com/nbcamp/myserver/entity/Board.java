@@ -32,18 +32,19 @@ public class Board extends Timestamped{
     @Column(nullable = false)
     private String context;
 
-    @Column(nullable = false)
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "USER_ID", nullable = false)
+    private User user;
 
-    @OneToMany
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
 
-    public Board(BoardRequestDto dto, Long userId) {
+    public Board(BoardRequestDto dto, User user) {
         this.title = dto.getTitle();
         this.username = dto.getUsername();
         this.password = dto.getPassword();
         this.context = dto.getContext();
-        this.userId = userId;
+        this.user = user;
     }
 
     public BoardResponseDto createResponse(CreateBoardDto createBoardDto) {
